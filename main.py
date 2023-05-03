@@ -1,13 +1,8 @@
-
 import matplotlib as mpl
 import csv
 import numpy as np
 import pandas as pd
 
-df = pd.read_csv('circuits.csv')
-df_circuitRef = df[(df['circuitRef'] =='albert_park') & (df['name'] == 'Australian Grand Prix')]
+df = pd.read_csv(r'C:\TrabalhoPython\pythonProject1\f12022\f1_drivers_points (1).csv')
 
-
-print(df.circuitRef.unique())
-print(df_circuitRef)
-
+print(df)
