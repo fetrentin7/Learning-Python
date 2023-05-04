@@ -9,7 +9,7 @@ df = pd.read_csv(r'C:\TrabalhoPython\pythonProject1\f12022\f1_drivers_points (1)
 print(df[['driver']].to_string(index=False))
 
 data_driver = df.loc[(df['nationality'] == 'GER')]
-# print(data_driver)
+print(data_driver)
 
 f_df = df.loc[(df['laps_led'] > 300)]
 print(f_df)
@@ -20,8 +20,19 @@ print(group)
 group_age = df.groupby(['age', 'wins']).sum()
 print(group_age)
 
-with open('new.csv', 'r', encoding='UTF8') as f:
-    writer = csv.writer(f)
 
-    writer.writerow(f_df)
-    writer.writerow(group)
+new_df = pd.concat([data_driver, f_df, group, group_age])
+
+data_driver.to_csv('output.csv', index=False)
+
+
+f_df.to_csv('output.csv', mode='a', index=False)
+
+with open('output.csv', mode='a', newline='') as f:
+    f.write('\n')
+    group.to_csv(f, index=False)
+
+# Append group_age to the output file
+group_age.to_csv('output.csv', mode='a', index=False)
+
+
