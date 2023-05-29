@@ -6,7 +6,6 @@ Max Verstappen,NED,RED BULL RACING RBPT,24,454,2,15,17,5,5,53,7,616,2
 Charles Leclerc,MON,FERRARI,24,308,3,3,11,3,4,49,9,311,1
 
 nationality,laps_led,age,wins,podiums,driver,team,points,dnf,flap,dotd,most_overtakes,poles,f_pitstop
-
 AUS,0,29,0,0,Daniel Ricciardo,MCLAREN MERCEDES,37,3,0,1,26,0,4
 CAN,0,23,0,0,Lance Stroll,ASTON MARTIN ARAMCO MERCEDES,18,3,0,0,45,0,0
 CAN,0,26,0,0,Nicholas Latifi,WILLIAMS MERCEDES,2,5,0,0,12,0,0
@@ -27,7 +26,6 @@ MEX,147,32,2,11,Sergio Perez,RED BULL RACING RBPT,305,3,3,3,32,1,8
 MON,311,24,3,11,Charles Leclerc,FERRARI,308,3,3,4,49,9,1
 NED,616,24,15,17,Max Verstappen,RED BULL RACING RBPT,454,2,5,5,53,7,2
 THA,0,26,0,0,Alexander Albon,WILLIAMS MERCEDES,4,5,0,0,26,0,1
-
 total_points,frequency
 12,1
 134,2
