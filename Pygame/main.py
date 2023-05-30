@@ -23,7 +23,7 @@ def flip_image(sprites):
 def load_sprite_sheets(dir1, dir2, width, height, direction=False):
     path = join('assets', dir1, dir2)
     images = [f for f in listdir(path) if isfile(join(path, f))]  # load files from `assets` and split them images
-    # into individual
+    # into individual ones
 
     all_sprites = {}
 
@@ -49,11 +49,13 @@ def load_sprite_sheets(dir1, dir2, width, height, direction=False):
 class Player(pygame.sprite.Sprite):
     PLAYER_COLOR = (255, 0, 0)
     GRAVITY_ACC = 1
-
+    SPRITES = load_sprite_sheets('MainCharacters', 'VirtualGuy', 32, 32)
     def __init__(self, x, y, width, height):
+
         self.rect = pygame.Rect(x, y, width, height)  # add colision and move player around
         self.x_vel = 0
         self.y_vel = 0
+        self.sprite = None
         self.mask = None
         self.move_check = 'Left'
         self.animation_counter = 0
@@ -76,13 +78,15 @@ class Player(pygame.sprite.Sprite):
             self.animation_counter = 0
 
     def move_lef_right(self, fps):  # fps variable will increase the y.vel by gravity
-        self.y_vel += min(1, (self.fall_counter / fps) * self.GRAVITY_ACC)
+        #self.y_vel += min(1, (self.fall_counter / fps) * self.GRAVITY_ACC)
         self.player_move(self.x_vel, self.y_vel)
 
         self.fall_counter = self.fall_counter + 1
 
     def draw(self, win):
-        pygame.draw.rect(win, self.PLAYER_COLOR, self.rect)
+        self.sprite = self.SPRITES['idle'][0] #access the first frame which is 0
+        win.blit(self.sprite, (self.rect.x, self.rect.y))
+        
 
 
 def get_background(name):
