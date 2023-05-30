@@ -4,6 +4,8 @@ import math
 from os import listdir
 from os.path import isfile, join
 
+from pygame.transform import flip
+
 pygame.init()
 pygame.display.set_caption("Game")
 
@@ -12,6 +14,36 @@ FPS = 60
 PLAYER_SPEED = 5
 
 main_window = pygame.display.set_mode((WIDTH, HEIGHT))
+
+
+def flip_image(sprites):
+    return [pygame.transform.flip(sprites, True, False) for sprite in sprites]
+
+
+def load_sprite_sheets(dir1, dir2, width, height, direction=False):
+    path = join('assets', dir1, dir2)
+    images = [f for f in listdir(path) if isfile(join(path, f))]  # load files from `assets` and split them images
+    # into individual
+
+    all_sprites = {}
+
+    for img in images:
+        sprite_sheet = pygame.image.load(join(path, img)).convert_alpha()  # load image and append path
+
+        sprites = []
+        for i in range(sprite_sheet.get_width() // width):
+            surface = pygame.Surface((width, height), pygame.SRCALPHA, 32)
+            rect = pygame.Rect(i * width, 0, width, height)
+            surface.blit(sprite_sheet, (0, 0), rect)
+            sprites.append(pygame.transform.scale2x(surface))
+
+        if direction:
+            flipped_sprites = [flip(sprite, True, False) for sprite in sprites]
+            all_sprites[img.replace('.png', '') + '_right'] = sprites
+            all_sprites[img.replace('.png', '') + '_left'] = flipped_sprites
+        else:
+            all_sprites[img.replace('.png', '')] = sprites
+    return all_sprites
 
 
 class Player(pygame.sprite.Sprite):
@@ -26,6 +58,7 @@ class Player(pygame.sprite.Sprite):
         self.move_check = 'Left'
         self.animation_counter = 0
         self.fall_counter = 0
+
     def player_move(self, dis_x, dis_y):
         self.rect.x += dis_x
         self.rect.y += dis_y
@@ -43,10 +76,11 @@ class Player(pygame.sprite.Sprite):
             self.animation_counter = 0
 
     def move_lef_right(self, fps):  # fps variable will increase the y.vel by gravity
-        self.y_vel += min(1, (self.fall_counter/fps) * self.GRAVITY_ACC)
+        self.y_vel += min(1, (self.fall_counter / fps) * self.GRAVITY_ACC)
         self.player_move(self.x_vel, self.y_vel)
 
         self.fall_counter = self.fall_counter + 1
+
     def draw(self, win):
         pygame.draw.rect(win, self.PLAYER_COLOR, self.rect)
 
