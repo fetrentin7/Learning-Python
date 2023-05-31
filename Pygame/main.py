@@ -95,16 +95,42 @@ class Player(pygame.sprite.Sprite):
 
         sprite_sheet_name = sprite_sheet + "_" + self.move_check
         sprites = self.SPRITES[sprite_sheet_name]
-        sprite_index = self.animation_counter // self.ANIMATION_DELAY % len(sprites)  # example if 10%5  == take
-        # second sprite //pick a new index for every animation frame
+        # example if 10%5  == take second sprite
+        sprite_index = self.animation_counter // self.ANIMATION_DELAY % len(sprites)
+        # pick a new index for every animation frame
 
         self.sprite = sprites[sprite_index]
         self.animation_counter += 1
+        self.rect_bound_update()
 
-
+    def rect_bound_update(self):
+        self.rect = self.sprite.get_rect(topleft=(self.rect.x, self.rect.y))  # rectangle adjusts based on sprite
+        self.mask = pygame.mask.from_surface(self.sprite)  # map all the pixels --> pixel perfect collision
 
     def draw(self, win):
         win.blit(self.sprite, (self.rect.x, self.rect.y))
+
+
+class Object(pygame.sprite.Sprite):
+    def __init__(self, x, y, width, height, name=None):
+        super().__init__()
+
+        self.rect = pygame.Rect(x, y, width, height)
+        self.image = pygame.Surface((width, height), pygame.SRCALPHA)
+        self.width = width
+        self.height = height
+        self.name = name
+
+    def draw(self, win):
+        win.blit(self.image, (self.rect.x, self.rect.y))
+
+
+class Block(Object):
+    def __init__(self, x, y, size):
+        super().__init__(x, y, size, size)
+        block = load_block(size)
+        self.image.blit(block, (0, 0))
+        self.mask = pygame.mask.from_surface(self.image)
 
 
 def get_background(name):
