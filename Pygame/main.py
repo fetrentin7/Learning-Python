@@ -81,13 +81,29 @@ class Player(pygame.sprite.Sprite):
             self.animation_counter = 0
 
     def move_lef_right(self, fps):  # fps variable will increase the y.vel by gravity
-        #self.y_vel += min(1, (self.fall_counter / fps) * self.GRAVITY_ACC)
+        # self.y_vel += min(1, (self.fall_counter / fps) * self.GRAVITY_ACC)
         self.player_move(self.x_vel, self.y_vel)
 
         self.fall_counter = self.fall_counter + 1
+        self.sprite_update()
+
+    def sprite_update(self):
+        sprite_sheet = "idle"
+
+        if self.x_vel != 0:
+            sprite_sheet = "run"
+
+        sprite_sheet_name = sprite_sheet + "_" + self.move_check
+        sprites = self.SPRITES[sprite_sheet_name]
+        sprite_index = self.animation_counter // self.ANIMATION_DELAY % len(sprites)  # example if 10%5  == take
+        # second sprite //pick a new index for every animation frame
+
+        self.sprite = sprites[sprite_index]
+        self.animation_counter += 1
+
+
 
     def draw(self, win):
-        self.sprite = self.SPRITES["idle_" + self.move_check][0]
         win.blit(self.sprite, (self.rect.x, self.rect.y))
 
 
@@ -104,7 +120,6 @@ def get_background(name):
     return tiles, image
 
 
-def sprite
 def draw(window, background, bg_image, player):
     for tile in background:
         window.blit(bg_image, tile)
