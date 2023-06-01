@@ -62,6 +62,7 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height):
         super().__init__()
 
+        self.jump_count = 0
         self.sprite = None
         self.rect = pygame.Rect(x, y, width, height)  # add colision and move player around
         self.x_vel = 0
@@ -93,6 +94,14 @@ class Player(pygame.sprite.Sprite):
 
         self.fall_counter = self.fall_counter + 1
         self.sprite_update()
+
+    def jump(self):
+        self.y_vel = -self.GRAVITY_ACC * 8
+        self.animation_counter = 0
+        self.jump_count += 1
+
+        if self.jump_count == 1:
+            self.fall_counter = 0
 
     def landed(self):
         self.fall_counter = 0
@@ -224,6 +233,10 @@ def main(window):
             if event.type == pygame.QUIT:
                 runner = False
                 break
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE and player.jump_count < 2:
+                    player.jump()
 
         player.move_lef_right(FPS)
         movement(player, floor)
