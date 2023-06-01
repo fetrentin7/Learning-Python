@@ -4,14 +4,12 @@ import math
 from os import listdir
 from os.path import isfile, join
 
-from pygame.transform import flip
-
 pygame.init()
 pygame.display.set_caption("Game")
 
 WIDTH, HEIGHT = 1280, 720
 FPS = 60
-PLAYER_SPEED = 5
+PLAYER_SPEED = 4
 
 main_window = pygame.display.set_mode((WIDTH, HEIGHT))
 
@@ -44,6 +42,15 @@ def load_sprite_sheets(dir1, dir2, width, height, direction=False):
                 all_sprites[img.replace(".png", "")] = sprites
 
     return all_sprites
+
+
+def load_block(size):
+    path = join("assets", "Terrain", "Terrain.png")
+    image = pygame.image.load(path).convert_alpha()
+    surface = pygame.Surface((size, size), pygame.SRCALPHA, 32)
+    rect = pygame.Rect(96, 0, size, size)
+    surface.blit(image, (0, 0), rect)
+    return pygame.transform.scale2x(surface)
 
 
 class Player(pygame.sprite.Sprite):
@@ -81,7 +88,7 @@ class Player(pygame.sprite.Sprite):
             self.animation_counter = 0
 
     def move_lef_right(self, fps):  # fps variable will increase the y.vel by gravity
-        # self.y_vel += min(1, (self.fall_counter / fps) * self.GRAVITY_ACC)
+        #self.y_vel += min(1, (self.fall_counter / fps) * self.GRAVITY_ACC)
         self.player_move(self.x_vel, self.y_vel)
 
         self.fall_counter = self.fall_counter + 1
@@ -146,9 +153,12 @@ def get_background(name):
     return tiles, image
 
 
-def draw(window, background, bg_image, player):
+def draw(window, background, bg_image, player, objects):
     for tile in background:
         window.blit(bg_image, tile)
+
+    for obj in objects:
+        obj.draw(window)
 
     player.draw(window)
     pygame.display.update()
@@ -169,7 +179,11 @@ def main(window):
     clock = pygame.time.Clock()
     background, bg_image = get_background("Blue.png")
 
+    size_block = 96
+
     player = Player(100, 100, 50, 50)
+    floor = [Block(i * size_block, HEIGHT - size_block, size_block)
+             for i in range(-WIDTH // size_block, (WIDTH * 2) // size_block)]
 
     runner = True
     while runner:
@@ -182,7 +196,7 @@ def main(window):
 
         player.move_lef_right(FPS)
         movement(player)
-        draw(window, background, bg_image, player)
+        draw(window, background, bg_image, player, floor)
     pygame.quit()
 
 
