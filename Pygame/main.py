@@ -88,11 +88,20 @@ class Player(pygame.sprite.Sprite):
             self.animation_counter = 0
 
     def move_lef_right(self, fps):  # fps variable will increase the y.vel by gravity
-        #self.y_vel += min(1, (self.fall_counter / fps) * self.GRAVITY_ACC)
+        self.y_vel += min(1, (self.fall_counter / fps) * self.GRAVITY_ACC)
         self.player_move(self.x_vel, self.y_vel)
 
         self.fall_counter = self.fall_counter + 1
         self.sprite_update()
+
+    def landed(self):
+        self.fall_counter = 0
+        self.y_vel = 0
+        self.jump_count = 0
+
+    def hit_head(self):
+        self.counter = 0
+        self.y_vel = self.y_vel * -1
 
     def sprite_update(self):
         sprite_sheet = "idle"
@@ -164,7 +173,26 @@ def draw(window, background, bg_image, player, objects):
     pygame.display.update()
 
 
-def movement(player):
+def vertical_collision(player, objects, dis_y):
+    collided_obj = []
+
+    for obj in objects:
+        if pygame.sprite.collide_mask(player, obj):
+
+            if dis_y > 0:
+                player.rect.bottom = obj.rect.top  # place the object on the top of collider
+                player.landed()
+
+            elif dis_y < 0:
+                player.rect.top = player.rect.bottom  # player feet = top of the object
+                player.hit_head()
+
+        collided_obj.append(obj)
+
+    return collided_obj
+
+
+def movement(player, objects):
     keys = pygame.key.get_pressed()
 
     player.x_vel = 0
@@ -174,6 +202,8 @@ def movement(player):
     if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
         player.player_move_right(PLAYER_SPEED)
 
+    vertical_collision(player, objects, player.y_vel)
+
 
 def main(window):
     clock = pygame.time.Clock()
@@ -182,6 +212,7 @@ def main(window):
     size_block = 96
 
     player = Player(100, 100, 50, 50)
+
     floor = [Block(i * size_block, HEIGHT - size_block, size_block)
              for i in range(-WIDTH // size_block, (WIDTH * 2) // size_block)]
 
@@ -195,7 +226,7 @@ def main(window):
                 break
 
         player.move_lef_right(FPS)
-        movement(player)
+        movement(player, floor)
         draw(window, background, bg_image, player, floor)
     pygame.quit()
 
