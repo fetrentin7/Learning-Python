@@ -62,6 +62,7 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height):
         super().__init__()
 
+        self.counter = 0
         self.jump_count = 0
         self.sprite = None
         self.rect = pygame.Rect(x, y, width, height)  # add colision and move player around
@@ -113,29 +114,29 @@ class Player(pygame.sprite.Sprite):
         self.y_vel = self.y_vel * -1
 
     def sprite_update(self):
-        conditions = [
-            (lambda: self.y_vel == 0 and self.x_vel == 0, "idle"),
-            (lambda: self.y_vel < 0 and self.jump_count == 1, "jump"),
-            (lambda: self.y_vel < 0 and self.jump_count == 2, "double_jump"),
-            (lambda: self.y_vel > self.GRAVITY_ACC * 2, "fall"),
-            (lambda: self.x_vel != 0 and self.y_vel == 0, "run")
-        ]
-
         sprite_sheet = "idle"
 
-        for condition, sheet in conditions:
-            if condition():
-                sprite_sheet = sheet
-                break
+        if self.y_vel < 0:
+            if self.jump_count == 1:
+                sprite_sheet = "jump"
+            elif self.jump_count == 2:
+                sprite_sheet = "double_jump"
 
+        elif self.y_vel > self.GRAVITY_ACC * 2:
+            sprite_sheet = "fall"
+
+        else:
+            if self.x_vel != 0:
+                sprite_sheet = "run"
         sprite_sheet_name = sprite_sheet + "_" + self.move_check
         sprites = self.SPRITES[sprite_sheet_name]
+        # example if 10%5  == take second sprite
         sprite_index = self.animation_counter // self.ANIMATION_DELAY % len(sprites)
+        # pick a new index for every animation frame
+
         self.sprite = sprites[sprite_index]
         self.animation_counter += 1
         self.rect_bound_update()
-
-        return sprite_sheet
 
     def rect_bound_update(self):
         self.rect = self.sprite.get_rect(topleft=(self.rect.x, self.rect.y))  # rectangle adjusts based on sprite
